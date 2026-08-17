@@ -19,7 +19,9 @@
     "ai:deploy": "supabase functions deploy ai"
   },
   "dependencies": {
+    "@imgly/background-removal": "^1.7.0",
     "@supabase/supabase-js": "^2.110.8",
+    "onnxruntime-web": "^1.21.0",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",
     "wouter": "^3.10.0"
