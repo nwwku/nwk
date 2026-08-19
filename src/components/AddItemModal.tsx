@@ -59,6 +59,7 @@ export function AddItemModal({ initialItem, onClose, onSave }: Props) {
     {image
       ? <div className="image-upload image-upload--preview"><img src={image} alt={tr('Processed garment', 'Обработанная вещь')} /></div>
       : <label className="image-upload" htmlFor="garment-photo"><Icon name="upload" /><span>{processing ? tr('Preparing the garment…', 'Подготавливаем вещь…') : tr('Add a photo', 'Добавить фото')}</span></label>}
+    {!image && <p className="image-processing-note">{tr('AI will find the main garment and remove the person and background.', 'AI найдёт главную вещь и уберёт человека и фон.')}</p>}
     {image && <label className="replace-photo-button" htmlFor="garment-photo">{tr('Replace photo', 'Заменить фото')}</label>}
     {error && <p className="form-error">{error}</p>}
     <label>{tr('Name', 'Название')}<input value={name} onChange={(event) => setName(event.target.value)} placeholder={tr('White oversized shirt', 'Белая оверсайз-рубашка')} autoFocus /></label>
