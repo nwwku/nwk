@@ -1,5 +1,5 @@
 import { createContext, useContext, useState, type ReactNode } from 'react';
-import { hasSavedProfileGender, loadProfileGender, type ProfileGender, saveProfileGender } from './profilePreferences';
+import { hasSelectedGenderThisSession, loadProfileGender, type ProfileGender, saveProfileGender } from './profilePreferences';
 
 const ProfileGenderContext = createContext<{
   gender: ProfileGender;
@@ -9,7 +9,7 @@ const ProfileGenderContext = createContext<{
 
 export function ProfileGenderProvider({ children }: { children: ReactNode }) {
   const [gender, setGenderState] = useState<ProfileGender>(loadProfileGender);
-  const [isGenderSelected, setIsGenderSelected] = useState(hasSavedProfileGender);
+  const [isGenderSelected, setIsGenderSelected] = useState(hasSelectedGenderThisSession);
 
   function setGender(nextGender: ProfileGender) {
     setGenderState(nextGender);

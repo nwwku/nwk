@@ -3,11 +3,11 @@ import { localize, styleLabel, useLanguage } from '../lib/language';
 import { scanPhoto, type ScanMode, type ScanResult } from '../lib/scan';
 import { Icon } from './Icon';
 
-export function ScanFlow({ shopping = false, onBack }: { shopping?: boolean; onBack: () => void }) {
+export function ScanFlow({ shopping = false, initialMode = 'buy', onBack }: { shopping?: boolean; initialMode?: ScanMode; onBack: () => void }) {
   const { language } = useLanguage();
   const tr = (en: string, ru: string) => localize(language, en, ru);
   const inputRef = useRef<HTMLInputElement>(null);
-  const [mode, setMode] = useState<ScanMode>('buy');
+  const [mode, setMode] = useState<ScanMode>(initialMode);
   const [preview, setPreview] = useState('');
   const [file, setFile] = useState<File | null>(null);
   const [result, setResult] = useState<ScanResult | null>(null);
@@ -34,12 +34,12 @@ export function ScanFlow({ shopping = false, onBack }: { shopping?: boolean; onB
     consider: tr('Think it over', 'Стоит подумать'),
     skip: tr('Better to skip', 'Лучше пропустить'),
   };
-  const title = result?.type === 'style'
+  const title = result?.type === 'outfit' ? result.title : result?.type === 'style'
     ? styleLabel(result.style, language)
     : result?.type === 'material' ? result.material : result ? buyLabels[result.verdict] : '';
   const details = result?.type === 'style'
     ? result.alternatives.map((style) => styleLabel(style, language))
-    : result?.type === 'material' ? result.alternatives : result?.considerations;
+    : result?.type === 'material' ? result.alternatives : result?.type === 'outfit' ? result.suggestions : result?.considerations;
 
   return <div className="stack-lg fade-in">
     <button className="back-button" onClick={onBack}>← {tr('Back', 'Назад')}</button>
@@ -48,12 +48,14 @@ export function ScanFlow({ shopping = false, onBack }: { shopping?: boolean; onB
       <button className={mode === 'buy' ? 'active' : ''} onClick={() => selectMode('buy')}>{tr('01 · Buy?', '01 · Покупать?')}</button>
       <button className={mode === 'material' ? 'active' : ''} onClick={() => selectMode('material')}>{tr('02 · Material', '02 · Материал')}</button>
       <button className={mode === 'style' ? 'active' : ''} onClick={() => selectMode('style')}>{tr('03 · Style', '03 · Стиль')}</button>
+      <button className={mode === 'outfit' ? 'active' : ''} onClick={() => selectMode('outfit')}>{tr('04 · Outfit', '04 · Образ')}</button>
     </div>
     <p className="scan-hint">{mode === 'buy'
       ? tr('Photograph the whole item clearly before buying it.', 'Перед покупкой сфотографируй вещь целиком и при хорошем свете.')
       : mode === 'material'
         ? tr('Photograph one item close up so its texture is visible.', 'Сфотографируй одну вещь близко, чтобы была видна фактура ткани.')
-        : tr('Photograph an item or a complete outfit.', 'Сфотографируй отдельную вещь или целый образ.')}</p>
+        : mode === 'style' ? tr('Photograph an item or a complete outfit.', 'Сфотографируй отдельную вещь или целый образ.')
+        : tr('Upload a complete outfit for kind, practical feedback.', 'Загрузи целый образ для доброй и практичной оценки.')}</p>
     <input ref={inputRef} className="visually-hidden" type="file" accept="image/*" capture="environment" onChange={choosePhoto} />
     <button className="camera-view scan-upload" onClick={() => inputRef.current?.click()}>
       {preview ? <img src={preview} alt={tr('Selected photo', 'Выбранное фото')} /> : <span><Icon name="upload" />{tr('Take or choose a photo', 'Сфотографируй или выбери фото')}</span>}
@@ -62,12 +64,12 @@ export function ScanFlow({ shopping = false, onBack }: { shopping?: boolean; onB
     <button className="primary-button" disabled={loading} onClick={analyze}><Icon name="scan" /> {loading
       ? tr('Analyzing…', 'Анализирую…')
       : mode === 'buy' ? tr('Check purchase', 'Проверить покупку')
-        : mode === 'material' ? tr('Identify material', 'Определить материал') : tr('Identify style', 'Определить стиль')}</button>
+        : mode === 'material' ? tr('Identify material', 'Определить материал') : mode === 'style' ? tr('Identify style', 'Определить стиль') : tr('Evaluate outfit', 'Оценить образ')}</button>
     {error && <p className="scan-error">{error}</p>}
     {result && <section className="style-scan-result">
-      <p className="eyebrow">{result.type === 'buy' ? tr('Purchase verdict', 'Решение о покупке') : result.type === 'material' ? tr('Likely material', 'Предполагаемый материал') : tr('Closest style', 'Больше всего похоже на')}</p>
-      <h2>{title}</h2><strong>{Math.round(result.confidence)}%</strong><p>{result.reason}</p>
-      {!!details?.length && <small>{result.type === 'buy' ? tr('Before buying, check', 'Перед покупкой проверь') : tr('Other possibilities', 'Другие варианты')}: {details.join(', ')}</small>}
+      <p className="eyebrow">{result.type === 'buy' ? tr('Purchase verdict', 'Решение о покупке') : result.type === 'material' ? tr('Likely material', 'Предполагаемый материал') : result.type === 'outfit' ? tr('Outfit feedback', 'Оценка образа') : tr('Closest style', 'Больше всего похоже на')}</p>
+      <h2>{title}</h2><strong>{Math.round(result.type === 'outfit' ? result.score : result.confidence)}%</strong><p>{result.reason}</p>
+      {!!details?.length && <small>{result.type === 'buy' ? tr('Before buying, check', 'Перед покупкой проверь') : result.type === 'outfit' ? tr('You could also try', 'Можно ещё попробовать') : tr('Other possibilities', 'Другие варианты')}: {details.join(', ')}</small>}
     </section>}
     <p className="privacy-note">{mode === 'buy'
       ? tr('The final decision also depends on price, fit, and what is already in your wardrobe.', 'Итоговое решение также зависит от цены, посадки и вещей, которые уже есть в гардеробе.')

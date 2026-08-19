@@ -3,18 +3,20 @@ import { Icon } from './Icon';
 import { localize, useLanguage } from '../lib/language';
 import { useProfileGender } from '../lib/profileGender';
 import type { ProfileGender } from '../lib/profilePreferences';
+import { useCurrentUser } from '../lib/useCurrentUser';
 
 const genderCards: Array<{ gender: ProfileGender; image: string; en: string; ru: string }> = [
   { gender: 'female', image: '/assets/style-quiz/female/stockholm.png', en: 'Female', ru: 'Женский' },
-  { gender: 'male', image: '/assets/discover/men/stockholm/stockholm-01.jpg', en: 'Male', ru: 'Мужской' },
+  { gender: 'male', image: '/assets/style-quiz/male/gender-choice.png?v=2', en: 'Male', ru: 'Мужской' },
 ];
 
 export function GenderGate() {
   const { language } = useLanguage();
   const { isGenderSelected, setGender } = useProfileGender();
+  const { user, loading } = useCurrentUser();
   const tr = (en: string, ru: string) => localize(language, en, ru);
 
-  if (isGenderSelected) return null;
+  if (loading || user || isGenderSelected) return null;
 
   function chooseGender(gender: ProfileGender) {
     setGender(gender);

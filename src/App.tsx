@@ -17,6 +17,9 @@ import { AuthPage } from './pages/AuthPage';
 import { AuthCallbackPage } from './pages/AuthCallbackPage';
 import { AvatarProvider } from './lib/avatar';
 import { GenderGate } from './components/GenderGate';
+import { PlannerPage } from './pages/PlannerPage';
+import { CapsulePage } from './pages/CapsulePage';
+import { AchievementsPage } from './pages/AchievementsPage';
 
 export default function App() {
   return (
@@ -49,6 +52,15 @@ export default function App() {
       </Route>
       <Route path="/saved">
         <AppShell><SavedLooksPage /></AppShell>
+      </Route>
+      <Route path="/planner">
+        <AppShell><PlannerPage /></AppShell>
+      </Route>
+      <Route path="/capsule">
+        <AppShell><CapsulePage /></AppShell>
+      </Route>
+      <Route path="/achievements">
+        <AppShell><AchievementsPage /></AppShell>
       </Route>
       <Route component={NotFoundPage} />
     </Switch><GenderGate /></ProfileGenderProvider></AvatarProvider></LanguageProvider></ThemeProvider>

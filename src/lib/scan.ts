@@ -1,11 +1,12 @@
 import { supabase } from './supabase';
 
-export type ScanMode = 'buy' | 'material' | 'style';
+export type ScanMode = 'buy' | 'material' | 'style' | 'outfit';
 export type BuyVerdict = 'buy' | 'consider' | 'skip';
 export type BuyScan = { type: 'buy'; verdict: BuyVerdict; confidence: number; reason: string; considerations: string[] };
 export type StyleScan = { type: 'style'; style: string; confidence: number; reason: string; alternatives: string[] };
 export type MaterialScan = { type: 'material'; material: string; confidence: number; reason: string; alternatives: string[] };
-export type ScanResult = BuyScan | StyleScan | MaterialScan;
+export type OutfitScan = { type: 'outfit'; score: number; title: string; reason: string; suggestions: string[] };
+export type ScanResult = BuyScan | StyleScan | MaterialScan | OutfitScan;
 
 const styles = ['Stockholm', 'Downtown', 'Y2K', 'Old Money', 'Clean Girl', 'Street Style', 'Vintage', 'Coquette', 'Casual'] as const;
 
@@ -45,6 +46,10 @@ const words = (value: unknown) => Array.isArray(value) ? value.filter((item): it
 
 export async function scanPhoto(file: File, mode: ScanMode, language: 'en' | 'ru'): Promise<ScanResult> {
   const answerLanguage = language === 'ru' ? 'Russian' : 'English';
+  if (mode === 'outfit') {
+    const parsed = await askVision(file, `Give kind, practical feedback on this outfit based only on visible color harmony, proportions, layering and occasion versatility. Never criticize the person's body or appearance. Return ONLY JSON: {"title":"short positive title","score":0-100,"reason":"what already works in one sentence","suggestions":["up to two optional improvements"]}. Write all text in ${answerLanguage}.`);
+    return { type: 'outfit', score: confidence(parsed.score), title: typeof parsed.title === 'string' ? parsed.title : '', reason: typeof parsed.reason === 'string' ? parsed.reason : '', suggestions: words(parsed.suggestions) };
+  }
   if (mode === 'buy') {
     const parsed = await askVision(file, `Assess whether this clothing item is worth considering as a purchase using only visible evidence: versatility, condition, construction, practicality, and how easily it can be styled. Do not invent its price, exact material, fit, brand, or the user's wardrobe. Return ONLY JSON: {"verdict":"buy|consider|skip","confidence":0-100,"reason":"one concise explanation","considerations":["up to two useful things to check before buying"]}. Keep verdict in English and write all other text in ${answerLanguage}.`);
     const verdict = parsed.verdict;

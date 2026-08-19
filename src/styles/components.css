@@ -37,6 +37,7 @@ input,select { border:1px solid var(--line); background:var(--white); color:var(
 .gender-gate__options button { position:relative; min-height:20rem; padding:0; border:2px solid transparent; overflow:hidden; background:#ddd; color:white; cursor:pointer; text-align:left; }
 .gender-gate__options button:hover { border-color:var(--ink); }
 .gender-gate__options .fashion-image { position:absolute; inset:0; filter:brightness(.74); }
+.gender-gate__options .single-image img { object-position:center 18%; }
 .gender-gate__options span { position:absolute; z-index:2; left:1rem; bottom:1rem; font-size:1.1rem; font-weight:700; }
 .gender-gate__options svg { position:absolute; z-index:2; right:1rem; top:1rem; width:2.3rem; height:2.3rem; padding:.55rem; border-radius:50%; background:white; color:var(--ink); }
 @media (max-width:520px) { .gender-gate__options button { min-height:15rem; } }

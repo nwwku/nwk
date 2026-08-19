@@ -29,6 +29,7 @@ export function AddItemModal({ initialItem, onClose, onSave }: Props) {
     const file = event.target.files?.[0];
     if (!file) return;
     setProcessing(true); setError('');
+    await new Promise<void>((resolve) => window.setTimeout(resolve, 0));
     try { setImage(await prepareGarmentImage(file)); }
     catch { setError(tr('Could not process the photo. Try another one.', 'Не удалось обработать фото. Попробуй другое.')); }
     finally { setProcessing(false); }
