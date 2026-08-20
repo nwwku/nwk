@@ -68,6 +68,14 @@
 .google-auth-button { width:100%; min-height:3rem; display:flex; align-items:center; justify-content:center; gap:.7rem; border:1px solid var(--line); border-radius:999px; background:var(--white); color:var(--ink); font-weight:600; }
 .google-auth-button span { width:1.45rem; height:1.45rem; display:grid; place-items:center; border:1px solid var(--line); border-radius:50%; font-family:Arial,sans-serif; color:#4285f4; }
 .google-auth-button:disabled { opacity:.55; }
+.auth-required-backdrop { position:fixed; z-index:65; inset:0; padding:1rem; display:grid; place-items:center; background:rgb(25 25 25 / .48); backdrop-filter:blur(8px); }
+.auth-required-dialog { position:relative; width:min(100%,31rem); padding:clamp(1.5rem,5vw,3rem); border:1px solid var(--line); border-radius:1.4rem; background:var(--paper); box-shadow:0 1.5rem 4rem rgb(25 25 25 / .2); text-align:center; }
+.auth-required-dialog h2 { margin:.55rem 0 .8rem; font-size:clamp(2rem,7vw,3rem); line-height:1; }
+.auth-required-dialog>p:not(.eyebrow) { color:var(--muted); line-height:1.55; }
+.auth-required-close { position:absolute; top:1rem; right:1rem; border:0; background:transparent; color:var(--ink); }
+.auth-required-actions { margin-top:1.5rem; display:grid; gap:.7rem; }
+.auth-required-actions a { text-decoration:none; }
+.auth-required-login { padding:.9rem 1rem; border:1px solid var(--line); color:var(--ink); text-transform:uppercase; letter-spacing:.1em; font-size:.74rem; font-weight:600; }
 @media (max-width:520px) { .account-card { align-items:flex-start; flex-direction:column; }.account-card a,.account-card button { width:100%; text-align:center; } }
 .gender-options { display:flex; padding:.25rem; border:1px solid var(--line); border-radius:2rem; background:var(--white); }
 .gender-options button { padding:.65rem 1rem; border:0; border-radius:2rem; background:transparent; color:var(--muted); font:inherit; font-size:.75rem; cursor:pointer; }
