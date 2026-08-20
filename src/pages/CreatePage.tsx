@@ -1,4 +1,5 @@
 import { useEffect, useState } from 'react';
+import { Link } from 'wouter';
 import { FashionImage } from '../components/FashionImage';
 import { AuthRequiredDialog } from '../components/AuthRequiredDialog';
 import { Icon } from '../components/Icon';
@@ -22,6 +23,7 @@ export function CreatePage() {
   const [style, setStyle] = useState(params.get('style') ?? 'Street Style'); const [items, setItems] = useState<WardrobeItem[]>([]);
   const [result, setResult] = useState<GeneratedOutfit | null>(null); const [loading, setLoading] = useState(false); const [error, setError] = useState('');
   const [authPromptOpen, setAuthPromptOpen] = useState(false);
+  const [emptyWardrobe, setEmptyWardrobe] = useState(false);
   const selectedPieces = items.filter((item) => result?.itemIds.includes(item.id));
   const authPrompt = authPromptOpen ? <AuthRequiredDialog onClose={() => setAuthPromptOpen(false)} /> : null;
 
@@ -30,6 +32,7 @@ export function CreatePage() {
     if (userLoading) return;
     if (!user) { setAuthPromptOpen(true); return; }
     setStyle(nextStyle);
+    if (!items.length) { setEmptyWardrobe(true); return; }
     setLoading(true); setError('');
     try { setResult(await generateOutfit(items, nextStyle, language)); }
     catch { setError(tr('Add at least one piece to your wardrobe first.', 'Сначала добавь хотя бы одну вещь в гардероб.')); }
@@ -37,6 +40,12 @@ export function CreatePage() {
   }
 
   if (mode === 'scan') return <ScanFlow initialMode="outfit" onBack={() => setMode('menu')} />;
+  if (emptyWardrobe) {
+    const requestedImage = params.get('image');
+    const query = new URLSearchParams({ style });
+    if (requestedImage?.startsWith('/assets/')) query.set('image', requestedImage);
+    return <div className="saved-empty fade-in"><Icon name="bag" size={34} /><p className="eyebrow">{styleLabel(style, language)}</p><h1>{tr('No pieces for this look yet', 'Для этого образа пока нет вещей')}</h1><p>{tr('See which pieces make up the look and where you can find them.', 'Посмотри, из каких вещей состоит образ и в каких магазинах их можно найти.')}</p><Link className="primary-button" href={`/look-shop?${query.toString()}`}>{tr('Find pieces for the look', 'Найти вещи для образа')}</Link><button className="back-button" onClick={() => setEmptyWardrobe(false)}>← {tr('Choose another style', 'Выбрать другой стиль')}</button></div>;
+  }
   if (result) return <div className="stack-lg"><button className="back-button" onClick={() => setResult(null)}>← {tr('Back to create', 'Назад')}</button><div className="page-title"><div><p className="eyebrow">{tr('Made from what you own', 'Создано из твоих вещей')}</p><h1>{result.title}</h1></div></div><OutfitResult style={style} items={selectedPieces.map((item) => item.name)} pieces={selectedPieces} reason={result.reason} onAgain={() => void create()} /><div className="sustain-note"><Icon name="sparkle" /><p><b>{tr('A no-buy win.', 'Без новых покупок.')}</b> {tr('Every piece in this look is already in your wardrobe.', 'Все вещи для этого образа уже есть в гардеробе.')}</p></div></div>;
   if (mode === 'style') return <div className="stack-lg fade-in"><button className="back-button" onClick={() => setMode('menu')}>← {tr('Create', 'Создать')}</button><div className="page-title"><div><p className="eyebrow">{tr('Create from style', 'Создать по стилю')}</p><h1>{tr('What’s the mood?', 'Какое настроение?')}</h1></div></div><div className="style-grid">{styleNames.map((name, index) => <button className={style === name ? 'style-card active' : 'style-card'} onClick={() => setStyle(name)} key={name}><FashionImage position={`${(index % 3) * 50}% ${index % 2 ? 100 : 0}%`} /><span>{styleLabel(name, language)}</span></button>)}</div>{error && <p className="form-error">{error}</p>}<button className="primary-button sticky-action" disabled={loading || userLoading} onClick={() => void create()}>{loading ? tr('Creating…', 'Создаю…') : tr('Create my outfit', 'Создать мой образ')} <Icon name="sparkle" /></button>{authPrompt}</div>;
   if (mode === 'recreate') return <div className="stack-lg fade-in"><button className="back-button" onClick={() => setMode('menu')}>← {tr('Create', 'Создать')}</button><div className="page-title"><div><p className="eyebrow">{tr('Recreate look', 'Повторить образ')}</p><h1>{tr('Make it yours.', 'Сделай его своим.')}</h1></div></div><p className="page-intro">{tr('Choose the closest style, then NERA will use only pieces from your wardrobe.', 'Выбери ближайший стиль, и NERA использует только вещи из твоего гардероба.')}</p><select value={style} onChange={(event) => setStyle(event.target.value)}>{styleNames.map((name) => <option key={name}>{name}</option>)}</select>{error && <p className="form-error">{error}</p>}<button className="primary-button" disabled={loading || userLoading} onClick={() => void create()}>{loading ? tr('Matching…', 'Подбираю…') : tr('Find a close outfit', 'Найти похожий образ')}</button>{authPrompt}</div>;

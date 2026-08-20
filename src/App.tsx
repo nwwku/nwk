@@ -20,6 +20,7 @@ import { GenderGate } from './components/GenderGate';
 import { PlannerPage } from './pages/PlannerPage';
 import { CapsulePage } from './pages/CapsulePage';
 import { AchievementsPage } from './pages/AchievementsPage';
+import { LookShopPage } from './pages/LookShopPage';
 
 export default function App() {
   return (
@@ -39,6 +40,9 @@ export default function App() {
       </Route>
       <Route path="/shop">
         <AppShell><ShopPage /></AppShell>
+      </Route>
+      <Route path="/look-shop">
+        <AppShell><LookShopPage /></AppShell>
       </Route>
       <Route path="/profile">
         <AppShell><ProfilePage /></AppShell>

@@ -26,6 +26,19 @@
 .shop-list article>div { padding:1.2rem 1rem 1rem 0; }
 .shop-list h2 { margin:.5rem 0 1.2rem; font-size:1.5rem; }
 .shop-list article>div>p:not(.eyebrow) { color:var(--muted); font-size:.78rem; line-height:1.5; }
+.look-shop-hero { position:relative; min-height:25rem; overflow:hidden; color:white; }
+.look-shop-hero>.fashion-image { position:absolute; inset:0; filter:brightness(.58); }
+.look-shop-hero>div { position:absolute; z-index:2; inset:auto 1.4rem 1.4rem; }
+.look-shop-hero h1 { margin:.35rem 0 .6rem; font-size:clamp(2.5rem,9vw,4.5rem); }
+.look-shop-hero p:last-child { max-width:32rem; line-height:1.5; }
+.look-shopping-list { display:grid; gap:.7rem; margin-top:1rem; }
+.look-shopping-list article { display:grid; grid-template-columns:2.5rem 1fr; gap:1rem; padding:1.2rem; background:var(--white); }
+.look-shopping-list article>span { color:var(--burgundy); font-size:.72rem; font-weight:700; }
+.look-shopping-list h2 { font-size:1.25rem; }
+.look-shopping-list p { margin:.35rem 0 .8rem; color:var(--muted); font-size:.75rem; }
+.look-store-links { display:flex; flex-wrap:wrap; gap:.45rem; }
+.look-store-links a { display:flex; align-items:center; gap:.25rem; padding:.55rem .7rem; border:1px solid var(--line); color:var(--ink); font-size:.68rem; }
+.shopping-disclaimer { color:var(--muted); font-size:.72rem; line-height:1.5; }
 .shop-stats { display:flex; gap:1rem; margin-bottom:1rem; }
 .shop-stats span { display:flex; flex-direction:column; color:var(--muted); font-size:.66rem; }
 .shop-stats b { color:var(--ink); font-size:1.25rem; }
