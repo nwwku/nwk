@@ -42,6 +42,7 @@ export function OutfitResult({ style, items, onAgain, inspirationImage, pieces: 
   const pieces = suppliedPieces ?? (orderedWardrobe.length === 0 ? [] : Array.from({ length: Math.min(3, orderedWardrobe.length) }, (_, index) => orderedWardrobe[(pieceOffset + index) % orderedWardrobe.length]));
   const displayedItems = pieces.length ? pieces.map((piece) => piece.name) : items;
   const lookId = `generated-${style}-${displayedItems.join('-')}`;
+  const resultImage = inspirationImage ?? (gender === 'male' ? '/assets/outfit-result-male.png' : '/assets/outfit-result.png');
   const [saved, setSaved] = useState(() => isLookSaved(lookId));
 
   useEffect(() => setSaved(isLookSaved(lookId)), [lookId]);
@@ -50,8 +51,8 @@ export function OutfitResult({ style, items, onAgain, inspirationImage, pieces: 
 
   return <div className="result-stack">
     <section className="result-card fade-in">
-      <div className="result-visual"><FashionImage src={inspirationImage ?? "/assets/outfit-result.png"} /><span className="match-pill"><Icon name="sparkle" size={15} />96% {tr('match', 'совпадение')}</span></div>
-      <div className="result-copy"><p className="eyebrow">{tr('Your look:', 'Твой образ:')} {styleLabel(style, language)}</p><h2>{tr('Easy proportions', 'Удачные пропорции')}</h2>{reason && <p>{reason}</p>}<ul>{displayedItems.map((item) => <li key={item}><span>✓</span>{localize(language, item, russianItems[item] ?? item)}</li>)}</ul><div className="result-actions"><button className="primary-button" onClick={tryAnother}>{tr('Try another', 'Другой вариант')}</button><button className="save-button" onClick={() => setSaved(toggleSavedLook({ id: lookId, style, items: displayedItems, image: '/assets/outfit-result.png', gender }))}><Icon name="heart" /> {saved ? tr('Saved ✓', 'Сохранено ✓') : tr('Save', 'Сохранить')}</button></div></div>
+      <div className="result-visual"><FashionImage src={resultImage} /><span className="match-pill"><Icon name="sparkle" size={15} />96% {tr('match', 'совпадение')}</span></div>
+      <div className="result-copy"><p className="eyebrow">{tr('Your look:', 'Твой образ:')} {styleLabel(style, language)}</p><h2>{tr('Easy proportions', 'Удачные пропорции')}</h2>{reason && <p>{reason}</p>}<ul>{displayedItems.map((item) => <li key={item}><span>✓</span>{localize(language, item, russianItems[item] ?? item)}</li>)}</ul><div className="result-actions"><button className="primary-button" onClick={tryAnother}>{tr('Try another', 'Другой вариант')}</button><button className="save-button" onClick={() => setSaved(toggleSavedLook({ id: lookId, style, items: displayedItems, image: resultImage, gender }))}><Icon name="heart" /> {saved ? tr('Saved ✓', 'Сохранено ✓') : tr('Save', 'Сохранить')}</button></div></div>
     </section>
     <OutfitPieces pieces={pieces} />
   </div>;
