@@ -85,6 +85,7 @@
 .auth-required-dialog { position:relative; width:min(100%,31rem); padding:clamp(1.5rem,5vw,3rem); border:1px solid var(--line); border-radius:1.4rem; background:var(--paper); box-shadow:0 1.5rem 4rem rgb(25 25 25 / .2); text-align:center; }
 .auth-required-dialog h2 { margin:.55rem 0 .8rem; font-size:clamp(2rem,7vw,3rem); line-height:1; }
 .auth-required-dialog>p:not(.eyebrow) { color:var(--muted); line-height:1.55; }
+.auth-required-dialog>svg { margin:0 auto .8rem; color:var(--burgundy); }
 .auth-required-close { position:absolute; top:1rem; right:1rem; border:0; background:transparent; color:var(--ink); }
 .auth-required-actions { margin-top:1.5rem; display:grid; gap:.7rem; }
 .auth-required-actions a { text-decoration:none; }

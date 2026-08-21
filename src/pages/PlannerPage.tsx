@@ -2,6 +2,7 @@ import { useEffect, useMemo, useState, type FormEvent } from 'react';
 import { Link } from 'wouter';
 import { FashionImage } from '../components/FashionImage';
 import { Icon } from '../components/Icon';
+import { WardrobeRequiredDialog } from '../components/WardrobeRequiredDialog';
 import { localize, useLanguage } from '../lib/language';
 import type { WardrobeItem } from '../lib/mockData';
 import { useProfileGender } from '../lib/profileGender';
@@ -15,10 +16,11 @@ export function PlannerPage() {
   const [plans, setPlans] = useState<OutfitPlan[]>([]); const [items, setItems] = useState<WardrobeItem[]>([]);
   const [date, setDate] = useState(new Date().toISOString().slice(0, 10)); const [occasion, setOccasion] = useState('');
   const [selected, setSelected] = useState<string[]>([]); const [message, setMessage] = useState('');
+  const [wardrobePromptOpen, setWardrobePromptOpen] = useState(false);
   const itemMap = useMemo(() => new Map(items.map((item) => [item.id, item])), [items]);
 
   useEffect(() => { if (!user) return; void Promise.all([loadPlans(gender), loadWardrobe(gender)])
-    .then(([savedPlans, wardrobe]) => { setPlans(savedPlans); setItems(wardrobe); }).catch(() => setMessage(tr('Could not load the planner.', 'Не удалось загрузить календарь.'))); }, [gender, user]);
+    .then(([savedPlans, wardrobe]) => { setPlans(savedPlans); setItems(wardrobe); setWardrobePromptOpen(wardrobe.length === 0); }).catch(() => setMessage(tr('Could not load the planner.', 'Не удалось загрузить календарь.'))); }, [gender, user]);
 
   function toggle(id: string) { setSelected((current) => current.includes(id) ? current.filter((item) => item !== id) : current.length < 4 ? [...current, id] : current); }
   async function submit(event: FormEvent) {
@@ -32,5 +34,6 @@ export function PlannerPage() {
   return <div className="stack-lg fade-in"><section className="page-title"><div><p className="eyebrow">{tr('Plan ahead', 'Планируй заранее')}</p><h1>{tr('Outfit calendar', 'Календарь образов')}</h1></div></section>
     <form className="planner-form" onSubmit={submit}><div className="form-grid"><label>{tr('Date', 'Дата')}<input type="date" value={date} onChange={(event) => setDate(event.target.value)} /></label><label>{tr('Occasion', 'Событие')}<input value={occasion} maxLength={60} onChange={(event) => setOccasion(event.target.value)} placeholder={tr('School, party…', 'Школа, праздник…')} /></label></div><p>{tr('Choose up to 4 pieces', 'Выбери до 4 вещей')}</p><div className="planner-picks">{items.map((item) => <button type="button" className={selected.includes(item.id) ? 'selected' : ''} onClick={() => toggle(item.id)} key={item.id}><FashionImage src={item.image} /><span>{item.name}</span></button>)}</div><button className="primary-button" disabled={!selected.length}>{tr('Add to calendar', 'Добавить в календарь')}</button></form>
     {message && <p className="form-error">{message}</p>}<section className="plan-list">{plans.map((plan) => <article key={plan.id}><time>{new Intl.DateTimeFormat(language === 'ru' ? 'ru-RU' : 'en-US', { day: 'numeric', month: 'short' }).format(new Date(`${plan.plannedFor}T12:00:00`))}</time><div><h2>{plan.title}</h2><p>{plan.wardrobeItemIds.map((id) => itemMap.get(id)?.name).filter(Boolean).join(' · ')}</p></div><button onClick={() => void remove(plan.id)} aria-label={tr('Delete', 'Удалить')}><Icon name="close" /></button></article>)}</section>
+    {wardrobePromptOpen && <WardrobeRequiredDialog action="calendar" onClose={() => setWardrobePromptOpen(false)} />}
   </div>;
 }
